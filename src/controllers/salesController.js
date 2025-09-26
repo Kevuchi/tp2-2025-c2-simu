@@ -1,4 +1,4 @@
-import { getSales } from "../services/salesService.js";
+import { getSales, getSaleById, getSaleByEmail } from "../services/salesService.js";
 
 export const getAllSales = async (req, res) => {
     try {
@@ -8,6 +8,30 @@ export const getAllSales = async (req, res) => {
         res.json(sales);
     } catch (error) {
         console.log("Error fetching sales: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const getSalesById = async (req, res) => {
+    try {
+        const sale = await getSaleById(req.params.id);
+        if (!sale) {
+            return res.status(404).json({ message: "Venta no encontrada" });
+        }
+        res.json(sale);
+    } catch (error) {
+        console.log("Error fetching sale: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const getSalesByEmail = async (req, res) => {
+    try {
+        const sale = await getSaleByEmail(req.params.email);
+        if (!sale) {
+            return res.status(404).json({ message: "Venta no encontrada" });
+        }
+        res.json(sale);
+    } catch (error) {
+        console.log("Error fetching sale: ", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
