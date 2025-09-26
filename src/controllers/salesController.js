@@ -1,4 +1,4 @@
-import { getSales, getSaleById, getSaleByEmail } from "../services/salesService.js";
+import { getSales, getSaleById, getSaleByEmail, getSalesTotal } from "../services/salesService.js";
 
 export const getAllSales = async (req, res) => {
     try {
@@ -11,6 +11,17 @@ export const getAllSales = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+export const getSalesWithTotal = async (req, res) => {
+    try {
+        const sales = await getSalesTotal();
+        res.json(sales);
+    }
+    catch (error) {
+        console.log("Error fetching totals: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 export const getSalesById = async (req, res) => {
     try {
         const sale = await getSaleById(req.params.id);

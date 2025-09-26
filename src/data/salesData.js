@@ -1,5 +1,6 @@
 import { getDbSupplies } from "./connection.js";
 import { ObjectId } from "mongodb";
+
 export async function findAllSales(page, pageSize) {
     const db = getDbSupplies();
     if (page && pageSize) {
@@ -16,6 +17,32 @@ export async function findAllSales(page, pageSize) {
         return sales;
     }
 }
+export async function findSalesTotal() {
+
+    const db = getDbSupplies();
+    const sales = await db.collection("sales").aggregate(
+        [
+            {
+                $addFields: {
+                    total: {
+                        $sum: {
+                            $map: {
+                                input: "items",
+                                as: "item",
+                                in: {
+                                    $multiply: ["item.quantity", { $toDouble: "item.price" }]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    )
+        .toArray();
+    return sales;
+}
+
 export async function findSaleById(id) {
     if (!id) throw new Error("Sale not provided")
     const db = getDbSupplies();
